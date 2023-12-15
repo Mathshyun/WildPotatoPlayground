@@ -5,18 +5,20 @@ using UnityEngine.UI;
 public class MainButtonAnimation : MonoBehaviour
 {
     private const float HoverPosX = -40f;
-    private const float MoveSpeed = 600f;
+    private const float MoveSpeed = 800f;
     private const float AlphaSpeed = 2f;
     
     private bool _isHovering;
     private bool _isPressed;
     private float _normalPosX;
 
+    private Button _button;
     private Image _image;
     private RectTransform _rectTransform;
 
     private void Start()
     {
+        _button = GetComponent<Button>();
         _image = GetComponent<Image>();
         _rectTransform = GetComponent<RectTransform>();
         _normalPosX = _rectTransform.anchoredPosition.x;
@@ -27,7 +29,7 @@ public class MainButtonAnimation : MonoBehaviour
         var increasing = initialPosX < finalPosX;
         var velocity = (increasing ? 1 : -1) * MoveSpeed * Time.deltaTime;
         
-        while (_isHovering == increasing)
+        while (increasing == _isHovering)
         {
             var currentPos = _rectTransform.anchoredPosition;
             
@@ -48,7 +50,7 @@ public class MainButtonAnimation : MonoBehaviour
         var increasing = initialAlpha < finalAlpha;
         var velocity = (increasing ? 1 : -1) * AlphaSpeed * Time.deltaTime;
         
-        while (_isPressed == increasing)
+        while (increasing == _isPressed)
         {
             var currentAlpha = _image.color.a;
             
@@ -66,24 +68,28 @@ public class MainButtonAnimation : MonoBehaviour
     
     public void OnPointerEnter()
     {
+        if (_button.interactable == false) return;
         _isHovering = true;
         StartCoroutine(MoveToPos(_normalPosX, HoverPosX));
     }
     
     public void OnPointerExit()
     {
+        if (_button.interactable == false) return;
         _isHovering = false;
         StartCoroutine(MoveToPos(HoverPosX, _normalPosX));
     }
     
     public void OnPointerDown()
     {
+        if (_button.interactable == false) return;
         _isPressed = true;
         StartCoroutine(ChangeAlpha(0.5f, 1f));
     }
     
     public void OnPointerUp()
     {
+        if (_button.interactable == false) return;
         _isPressed = false;
         StartCoroutine(ChangeAlpha(1f, 0.5f));
     }
