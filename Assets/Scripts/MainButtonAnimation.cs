@@ -1,96 +1,38 @@
-using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class MainButtonAnimation : MonoBehaviour
+public class MainButtonAnimation : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 {
-    private const float HoverPosX = -40f;
-    private const float MoveSpeed = 800f;
-    private const float AlphaSpeed = 2f;
+    private static readonly int HoverHash = Animator.StringToHash("Hover");
+    private static readonly int PressedHash = Animator.StringToHash("Pressed");
     
-    private bool _isHovering;
-    private bool _isPressed;
-    private float _normalPosX;
-
     private Button _button;
-    private Image _image;
-    private RectTransform _rectTransform;
+    private Animator _anim;
 
     private void Start()
     {
         _button = GetComponent<Button>();
-        _image = GetComponent<Image>();
-        _rectTransform = GetComponent<RectTransform>();
-        _normalPosX = _rectTransform.anchoredPosition.x;
+        _anim = GetComponent<Animator>();
     }
 
-    private IEnumerator MoveToPos(float initialPosX, float finalPosX)
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        var increasing = initialPosX < finalPosX;
-        var velocity = (increasing ? 1 : -1) * MoveSpeed * Time.deltaTime;
-        
-        while (increasing == _isHovering)
-        {
-            var currentPos = _rectTransform.anchoredPosition;
-            
-            currentPos.x += velocity;
-            if ((increasing && currentPos.x >= finalPosX) || (!increasing && currentPos.x <= finalPosX))
-            {
-                currentPos.x = finalPosX;
-                _rectTransform.anchoredPosition = currentPos;
-                yield break;
-            }
-            _rectTransform.anchoredPosition = currentPos;
-            yield return null;
-        }
-    }
-
-    private IEnumerator ChangeAlpha(float initialAlpha, float finalAlpha)
-    {
-        var increasing = initialAlpha < finalAlpha;
-        var velocity = (increasing ? 1 : -1) * AlphaSpeed * Time.deltaTime;
-        
-        while (increasing == _isPressed)
-        {
-            var currentAlpha = _image.color.a;
-            
-            currentAlpha += velocity;
-            if ((increasing && currentAlpha >= finalAlpha) || (!increasing && currentAlpha <= finalAlpha))
-            {
-                currentAlpha = finalAlpha;
-                _image.color = new Color(_image.color.r, _image.color.g, _image.color.b, currentAlpha);
-                yield break;
-            }
-            _image.color = new Color(_image.color.r, _image.color.g, _image.color.b, currentAlpha);
-            yield return null;
-        }
+        if (_button.interactable) _anim.SetBool(HoverHash, true);
     }
     
-    public void OnPointerEnter()
+    public void OnPointerExit(PointerEventData eventData)
     {
-        if (_button.interactable == false) return;
-        _isHovering = true;
-        StartCoroutine(MoveToPos(_normalPosX, HoverPosX));
+        if (_button.interactable) _anim.SetBool(HoverHash, false);
     }
     
-    public void OnPointerExit()
+    public void OnPointerDown(PointerEventData eventData)
     {
-        if (_button.interactable == false) return;
-        _isHovering = false;
-        StartCoroutine(MoveToPos(HoverPosX, _normalPosX));
+        if (_button.interactable) _anim.SetBool(PressedHash, true);
     }
     
-    public void OnPointerDown()
+    public void OnPointerUp(PointerEventData eventData)
     {
-        if (_button.interactable == false) return;
-        _isPressed = true;
-        StartCoroutine(ChangeAlpha(0.5f, 1f));
-    }
-    
-    public void OnPointerUp()
-    {
-        if (_button.interactable == false) return;
-        _isPressed = false;
-        StartCoroutine(ChangeAlpha(1f, 0.5f));
+        if (_button.interactable) _anim.SetBool(PressedHash, false);
     }
 }

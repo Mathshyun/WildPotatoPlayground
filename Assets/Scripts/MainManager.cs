@@ -1,282 +1,234 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class MainManager : MonoBehaviour
 {
-    private const float ButtonHideAnimationDuration = 0.2f;
-    private const float ButtonBackShowAnimationDuration = 0.3f;
-    private const float InfoTextShowAnimationDuration = 0.3f;
-    private const float TitleTextHideAnimationDuration = 0.3f;
-    private const float TransitionDuration = 0.5f;
+    private const float AfterButtonBackDelay = 0.5f;
+    private const float AfterTransitionDelay = 1f;
+    private const float SettingsShowDelay = 0.1f;
     
-    [Header ("Canvas Objects")]
-    [SerializeField] private GameObject titleText1;
-    [SerializeField] private GameObject titleText2;
+    private static readonly int FirstHash = Animator.StringToHash("First");
+    private static readonly int ShowHash = Animator.StringToHash("Show");
+    private static readonly int HideHash = Animator.StringToHash("Hide");
+    private static readonly int SkipHash = Animator.StringToHash("Skip");
+    
+    [Header ("Main")]
+    [SerializeField] private GameObject mainParent;
+    
+    [Space (10)]
+    [FormerlySerializedAs("title")]
+    [SerializeField] private GameObject mainTitle;
+    [SerializeField] private GameObject infoText;
+    
+    [Space (10)]
     [SerializeField] private GameObject startButton;
     [SerializeField] private GameObject settingsButton;
     [SerializeField] private GameObject quitButton;
-    [SerializeField] private GameObject buttonBack;
-    [SerializeField] private GameObject infoText;
+    
+    [Space (10)]
+    [SerializeField] private GameObject startButtonBack;
+    [SerializeField] private GameObject settingsButtonBack;
+    [SerializeField] private GameObject quitButtonBack;
+    
+    [Header ("Settings")]
+    [SerializeField] private GameObject settingsParent;
+    
+    [Space (10)]
+    [SerializeField] private GameObject settingsTitle;
+    [SerializeField] private GameObject settingsButtons;
+    [SerializeField] private GameObject settingsBackButton;
+
+    [Header ("Transition")]
     [SerializeField] private GameObject transition;
     
-    [Header ("Prefabs")]
-    [SerializeField] private GameObject startButtonBackPrefab;
-    [SerializeField] private GameObject settingsButtonBackPrefab;
-    [SerializeField] private GameObject quitButtonBackPrefab;
 
-    private static float ButtonBackShowAnimationMethod(float x) => Mathf.Pow(x, 2) - 2 * x + 1f;
+    private Animator _mainTitleAnim;
+    private Animator _infoTextAnim;
+    private Animator _startButtonAnim;
+    private Animator _settingsButtonAnim;
+    private Animator _quitButtonAnim;
+    private Animator _settingsTitleAnim;
+    private Animator _settingsBackButtonAnim;
+    
+    private List<Animator> _settingsButtonAnims = new();
 
+    [HideInInspector] public bool isMainAnimationFinished;
+
+    public static MainManager Instance { get; private set; }
 
     private void Awake()
     {
-        transition.GetComponent<RectTransform>().sizeDelta =
-            new Vector2(Screen.width + Screen.height / 2f, Screen.height);
-        transition.transform.GetChild(0).GetComponent<RectTransform>().sizeDelta =
-            new Vector2(Screen.width, 0);
-        transition.transform.GetChild(1).GetComponent<RectTransform>().sizeDelta =
-            new Vector2(Screen.height / 2f, 0);
+        if (Instance is null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
     
     private void Start()
     {
-        titleText1.SetActive(false);
-        titleText2.SetActive(false);
-        startButton.SetActive(false);
-        settingsButton.SetActive(false);
-        quitButton.SetActive(false);
-        infoText.SetActive(false);
+        isMainAnimationFinished = false;
+
         infoText.GetComponent<Text>().text = $"v{Application.version}";
-        StartCoroutine(PlayIntroAnimation());
-    }
-
-    private IEnumerator PlayIntroAnimation()
-    {
-        var titleText1Anim = titleText1.GetComponent<Animator>();
-        var titleText2Anim = titleText2.GetComponent<Animator>();
-        var startButtonAnim = startButton.GetComponent<Animator>();
-        var settingsButtonAnim = settingsButton.GetComponent<Animator>();
-        var quitButtonAnim = quitButton.GetComponent<Animator>();
         
-        titleText1.SetActive(true);
-        titleText1Anim.Play("Show");
-        yield return new WaitForSeconds(0.2f);
-        titleText2.SetActive(true);
-        titleText2Anim.Play("Show");
-        yield return new WaitForSeconds(0.8f);
+        _mainTitleAnim = mainTitle.GetComponent<Animator>();
+        _infoTextAnim = infoText.GetComponent<Animator>();
+        _startButtonAnim = startButton.GetComponent<Animator>();
+        _settingsButtonAnim = settingsButton.GetComponent<Animator>();
+        _quitButtonAnim = quitButton.GetComponent<Animator>();
+        _settingsTitleAnim = settingsTitle.GetComponent<Animator>();
+        _settingsBackButtonAnim = settingsBackButton.GetComponent<Animator>();
         
-        titleText1Anim.Play("Move Top");
-        titleText2Anim.Play("Move Top");
-        yield return new WaitForSeconds(0.5f);
-        
-        startButton.SetActive(true);
-        startButtonAnim.Play("Show");
-        yield return new WaitForSeconds(0.2f);
-        
-        settingsButton.SetActive(true);
-        settingsButtonAnim.Play("Show");
-        yield return new WaitForSeconds(0.2f);
-        
-        quitButton.SetActive(true);
-        quitButtonAnim.Play("Show");
-        yield return new WaitForSeconds(0.2f);
-
-        infoText.SetActive(true);
-        StartCoroutine(MainInfoTextShowAnimation());
-
-        yield return new WaitForSeconds(0.3f);
-        
-        startButton.GetComponent<Button>().interactable = true;
-        settingsButton.GetComponent<Button>().interactable = true;
-        quitButton.GetComponent<Button>().interactable = true;
-        titleText1Anim.enabled = false;
-        titleText2Anim.enabled = false;
-        startButtonAnim.enabled = false;
-        settingsButtonAnim.enabled = false;
-        quitButtonAnim.enabled = false;
-    }
-
-    private IEnumerator StartButtonPressed()
-    {
-        var startButtonBack = Instantiate(startButtonBackPrefab, buttonBack.transform);
-        
-        StartCoroutine(MainButtonHideAnimation(settingsButton.GetComponent<RectTransform>()));
-        StartCoroutine(MainButtonHideAnimation(quitButton.GetComponent<RectTransform>()));
-        
-        yield return StartCoroutine(MainButtonBackShowAnimation(startButtonBack.GetComponent<RectTransform>()));
-        yield return new WaitForSeconds(0.3f);
-
-        yield return StartCoroutine(TransitionShowAnimation());
-        yield return new WaitForSeconds(0.3f);
-
-        // To be removed later
-        GameManager.QuitGame();
-    }
-    
-    private IEnumerator SettingsButtonPressed()
-    {
-        var settingsButtonBack = Instantiate(settingsButtonBackPrefab, buttonBack.transform);
-        
-        StartCoroutine(MainButtonHideAnimation(startButton.GetComponent<RectTransform>()));
-        StartCoroutine(MainButtonHideAnimation(quitButton.GetComponent<RectTransform>()));
-        StartCoroutine(TitleTextHideAnimation());
-        
-        yield return StartCoroutine(MainButtonBackShowAnimation(settingsButtonBack.GetComponent<RectTransform>()));
-        yield return new WaitForSeconds(0.3f);
-        
-        // To be removed later
-        yield return StartCoroutine(TransitionShowAnimation());
-        yield return new WaitForSeconds(0.3f);
-
-        GameManager.QuitGame();
-    }
-    
-    private IEnumerator QuitButtonPressed()
-    {
-        var quitButtonBack = Instantiate(quitButtonBackPrefab, buttonBack.transform);
-        
-        StartCoroutine(MainButtonHideAnimation(startButton.GetComponent<RectTransform>()));
-        StartCoroutine(MainButtonHideAnimation(settingsButton.GetComponent<RectTransform>()));
-        
-        yield return StartCoroutine(MainButtonBackShowAnimation(quitButtonBack.GetComponent<RectTransform>()));
-        yield return new WaitForSeconds(0.3f);
-        
-        yield return StartCoroutine(TransitionShowAnimation());
-        yield return new WaitForSeconds(0.3f);
-
-        GameManager.QuitGame();
-    }
-
-    private IEnumerator TitleTextHideAnimation()
-    {
-        var startTime = Time.time;
-        var titleText1Rect = titleText1.GetComponent<RectTransform>();
-        var titleText2Rect = titleText2.GetComponent<RectTransform>();
-
-        titleText1Rect.anchorMin = new Vector2(0.5f, 0.5f);
-        titleText1Rect.anchorMax = new Vector2(0.5f, 0.5f);
-        titleText1Rect.pivot = new Vector2(0.5f, 0.5f);
-        titleText2Rect.anchorMin = new Vector2(0.5f, 0.5f);
-        titleText2Rect.anchorMax = new Vector2(0.5f, 0.5f);
-        titleText2Rect.pivot = new Vector2(0.5f, 0.5f);
-
-        while (true)
+        foreach (var anim in settingsButtons.GetComponentsInChildren<Animator>())
         {
-            var progress = (Time.time - startTime) / TitleTextHideAnimationDuration;
-
-            if (progress >= 1f) break;
-
-            progress *= progress;
-            
-            titleText1Rect.anchorMin = new Vector2(0.5f - progress * 0.5f, 0.5f);
-            titleText1Rect.anchorMax = new Vector2(0.5f - progress * 0.5f, 0.5f);
-            titleText1Rect.pivot = new Vector2(0.5f + progress * 0.5f, 0.5f);
-            titleText2Rect.anchorMin = new Vector2(0.5f - progress * 0.5f, 0.5f);
-            titleText2Rect.anchorMax = new Vector2(0.5f - progress * 0.5f, 0.5f);
-            titleText2Rect.pivot = new Vector2(0.5f + progress * 0.5f, 0.5f);
-
-            yield return null;
+            _settingsButtonAnims.Add(anim);
         }
         
-        titleText1Rect.anchorMin = new Vector2(0f, 0.5f);
-        titleText1Rect.anchorMax = new Vector2(0f, 0.5f);
-        titleText1Rect.pivot = new Vector2(1f, 0.5f);
-        titleText2Rect.anchorMin = new Vector2(0f, 0.5f);
-        titleText2Rect.anchorMax = new Vector2(0f, 0.5f);
-        titleText2Rect.pivot = new Vector2(1f, 0.5f);
+        _mainTitleAnim.SetTrigger(FirstHash);
+        _infoTextAnim.SetTrigger(FirstHash);
+        _startButtonAnim.SetTrigger(FirstHash);
+        _settingsButtonAnim.SetTrigger(FirstHash);
+        _quitButtonAnim.SetTrigger(FirstHash);
     }
 
-    private IEnumerator MainInfoTextShowAnimation()
+    private void Update()
     {
-        var startTime = Time.time;
-        var infoTextRect = infoText.GetComponent<RectTransform>();
-
-        infoTextRect.pivot = new Vector2(0f, 0f);
-
-        while (Time.time - startTime < InfoTextShowAnimationDuration)
+        if (!isMainAnimationFinished && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Mouse0)))
         {
-            var progress = (Time.time - startTime) / InfoTextShowAnimationDuration;
-            infoTextRect.pivot = new Vector2(progress * (2f - progress), 0f);
-            yield return null;
-        }
+            isMainAnimationFinished = true;
         
-        infoTextRect.pivot = new Vector2(1f, 0f);
+            _mainTitleAnim.SetTrigger(SkipHash);
+            _infoTextAnim.SetTrigger(SkipHash);
+            _startButtonAnim.SetTrigger(SkipHash);
+            _settingsButtonAnim.SetTrigger(SkipHash);
+            _quitButtonAnim.SetTrigger(SkipHash);
+        }
+
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            // TODO
+        }
+
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            // TODO
+        }
     }
 
-    private IEnumerator TransitionShowAnimation()
+    private IEnumerator StartAnimation()
     {
-        var startTime = Time.time;
-        var transitionRect = transition.GetComponent<RectTransform>();
+        _settingsButtonAnim.SetTrigger(HideHash);
+        _quitButtonAnim.SetTrigger(HideHash);
         
-        transitionRect.pivot = new Vector2(1f, 0.5f);
+        startButtonBack.SetActive(true);
+        startButtonBack.GetComponent<Animator>().SetTrigger(ShowHash);
+
+        yield return new WaitForSeconds(AfterButtonBackDelay);
+        
         transition.SetActive(true);
+        transition.GetComponent<Animator>().SetTrigger(ShowHash);
+        
+        yield return new WaitForSeconds(AfterTransitionDelay);
+    }
+    
+    private IEnumerator SettingsAnimation()
+    {
+        var settingsButtonBackAnim = settingsButtonBack.GetComponent<Animator>();
+        
+        _startButtonAnim.SetTrigger(HideHash);
+        _quitButtonAnim.SetTrigger(HideHash);
+        
+        settingsButtonBack.SetActive(true);
+        settingsButtonBackAnim.SetTrigger(ShowHash);
+        _mainTitleAnim.SetTrigger(HideHash);
+        _infoTextAnim.SetTrigger(HideHash);
+        
+        yield return new WaitForSeconds(AfterButtonBackDelay);
+        
+        settingsButtonBackAnim.SetTrigger(HideHash);
+        settingsParent.SetActive(true);
 
-        while (true)
+        yield return new WaitForSeconds(0.2f);
+        
+        _settingsTitleAnim.SetTrigger(ShowHash);
+        
+        yield return new WaitForSeconds(SettingsShowDelay);
+        
+        foreach (var anim in _settingsButtonAnims)
         {
-            var progress = (Time.time - startTime) / TransitionDuration;
-
-            if (progress >= 1f) break;
-            
-            transitionRect.pivot = new Vector2(progress * (progress - 2f) + 1f, 0.5f);
-            yield return null;
+            anim.SetTrigger(ShowHash);
+            yield return new WaitForSeconds(SettingsShowDelay);
         }
         
-        transitionRect.pivot = new Vector2(0f, 0.5f);
+        _settingsBackButtonAnim.SetTrigger(ShowHash);
+        
+        mainParent.SetActive(false);
+        
     }
 
-    private static IEnumerator MainButtonHideAnimation(RectTransform buttonRect)
+    private IEnumerator QuitAnimation()
     {
-        var startTime = Time.time;
+        _startButtonAnim.SetTrigger(HideHash);
+        _settingsButtonAnim.SetTrigger(HideHash);
         
-        while (Time.time - startTime < ButtonHideAnimationDuration)
+        quitButtonBack.SetActive(true);
+        quitButtonBack.GetComponent<Animator>().SetTrigger(ShowHash);
+
+        yield return new WaitForSeconds(AfterButtonBackDelay);
+        
+        transition.SetActive(true);
+        transition.GetComponent<Animator>().SetTrigger(ShowHash);
+
+        yield return new WaitForSeconds(AfterTransitionDelay);
+        
+        GameManager.QuitGame();
+    }
+
+    private IEnumerator SettingsBackAnimation()
+    {
+        _settingsTitleAnim.SetTrigger(HideHash);
+        _settingsBackButtonAnim.SetTrigger(HideHash);
+        
+        foreach (var anim in _settingsButtonAnims)
         {
-            var currentPivotX = Mathf.Pow((Time.time - startTime) / ButtonHideAnimationDuration, 2f);
-            buttonRect.pivot = new Vector2(currentPivotX, buttonRect.pivot.y);
-            yield return null;
+            anim.SetTrigger(HideHash);
         }
         
-        buttonRect.pivot = new Vector2(1, buttonRect.pivot.y);
-    }
-
-    private static IEnumerator MainButtonBackShowAnimation(RectTransform backRect)
-    {
-        var startTime = Time.time;
-
-        backRect.pivot = new Vector2(1f, backRect.pivot.y);
-        backRect.gameObject.SetActive(true);
+        yield return new WaitForSeconds(0.2f);
         
-        while (Time.time - startTime < ButtonBackShowAnimationDuration)
-        {
-            var currentPivotX = ButtonBackShowAnimationMethod((Time.time - startTime) / ButtonBackShowAnimationDuration);
-            backRect.pivot = new Vector2(currentPivotX, backRect.pivot.y);
-            yield return null;
-        }
+        mainParent.SetActive(true);
+        settingsParent.SetActive(false);
         
-        backRect.pivot = new Vector2(0, backRect.pivot.y);
-    }
-
-    private void DisableButtons()
-    {
-        startButton.GetComponent<Button>().interactable = false;
-        settingsButton.GetComponent<Button>().interactable = false;
-        quitButton.GetComponent<Button>().interactable = false;
+        _mainTitleAnim.SetTrigger(ShowHash);
+        _infoTextAnim.SetTrigger(ShowHash);
+        _startButtonAnim.SetTrigger(ShowHash);
+        _settingsButtonAnim.SetTrigger(ShowHash);
+        _quitButtonAnim.SetTrigger(ShowHash);
     }
     
     public void OnStartButtonPressed()
     {
-        DisableButtons();
-        StartCoroutine(StartButtonPressed());
+        StartCoroutine(StartAnimation());
     }
     
     public void OnSettingsButtonPressed()
     {
-        DisableButtons();
-        StartCoroutine(SettingsButtonPressed());
+        StartCoroutine(SettingsAnimation());
     }
     
     public void OnQuitButtonPressed()
     {
-        DisableButtons();
-        StartCoroutine(QuitButtonPressed());
+        StartCoroutine(QuitAnimation());
+    }
+
+    public void OnSettingsBackButtonPressed()
+    {
+        StartCoroutine(SettingsBackAnimation());
     }
 }
