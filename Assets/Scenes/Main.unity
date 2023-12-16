@@ -162,7 +162,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 80, y: -320}
-  m_SizeDelta: {x: 480, y: 120}
+  m_SizeDelta: {x: 240, y: 120}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &134847919
 MonoBehaviour:
@@ -798,6 +798,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cb58dffd86d7d34ca45dd5e6de95219, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  somethingButton: {fileID: 567490136}
+  nothingButton: {fileID: 634054774}
+  anythingButton: {fileID: 1527345926}
+  everythingButton: {fileID: 1631188520}
+  oneMoreThingButton: {fileID: 669885717}
 --- !u!4 &409461944
 Transform:
   m_ObjectHideFlags: 0
@@ -853,7 +858,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 80, y: 160}
-  m_SizeDelta: {x: 800, y: 120}
+  m_SizeDelta: {x: 800, y: 80}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &567490138
 MonoBehaviour:
@@ -898,7 +903,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 567490139}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 409461943}
+        m_TargetAssemblyTypeName: SettingsManager, Assembly-CSharp
+        m_MethodName: SetSomething
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &567490139
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1010,7 +1027,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 80, y: 80}
-  m_SizeDelta: {x: 800, y: 120}
+  m_SizeDelta: {x: 800, y: 80}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &634054776
 MonoBehaviour:
@@ -1055,7 +1072,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 634054777}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 409461943}
+        m_TargetAssemblyTypeName: SettingsManager, Assembly-CSharp
+        m_MethodName: SetNothing
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &634054777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1207,7 +1236,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 80, y: -160}
-  m_SizeDelta: {x: 800, y: 120}
+  m_SizeDelta: {x: 800, y: 80}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &669885719
 MonoBehaviour:
@@ -1252,7 +1281,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 669885720}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 409461943}
+        m_TargetAssemblyTypeName: SettingsManager, Assembly-CSharp
+        m_MethodName: SetOneMoreThing
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &669885720
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1437,8 +1478,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -20, y: 0}
+  m_SizeDelta: {x: -40, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &733360665
 MonoBehaviour:
@@ -1473,7 +1514,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Off
+  m_Text: OFF
 --- !u!222 &733360666
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1526,6 +1567,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afdd683a0ede32445af306ae5483407d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  something: 0
+  nothing: 0
+  anything: 0
+  everything: 0
+  oneMoreThing: 0
+  isMainAnimationFinished: 0
 --- !u!1 &883888660
 GameObject:
   m_ObjectHideFlags: 0
@@ -1560,8 +1607,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -20, y: 0}
+  m_SizeDelta: {x: -40, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &883888662
 MonoBehaviour:
@@ -1596,7 +1643,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Off
+  m_Text: OFF
 --- !u!222 &883888663
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1639,8 +1686,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -20, y: 0}
+  m_SizeDelta: {x: -40, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &894119564
 MonoBehaviour:
@@ -1675,7 +1722,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Off
+  m_Text: OFF
 --- !u!222 &894119565
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1919,8 +1966,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -20, y: 0}
+  m_SizeDelta: {x: -40, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &958297203
 MonoBehaviour:
@@ -1955,7 +2002,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Off
+  m_Text: OFF
 --- !u!222 &958297204
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1979,7 +2026,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &971131943
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2133,7 +2180,7 @@ Animator:
   m_GameObject: {fileID: 1082143957}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 56357369be97f7542abe2fcd33f67166, type: 2}
+  m_Controller: {fileID: 9100000, guid: 8379d8aae4611bd4a91127c90ac4a0d6, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -2425,7 +2472,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20f3e55c91bc11c4c97bd4f1ede38528, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainParent: {fileID: 916036031}
   mainTitle: {fileID: 1671917328}
   infoText: {fileID: 1372824183}
   startButton: {fileID: 361250415}
@@ -2434,12 +2480,10 @@ MonoBehaviour:
   startButtonBack: {fileID: 2018970301}
   settingsButtonBack: {fileID: 356820584}
   quitButtonBack: {fileID: 325739592}
-  settingsParent: {fileID: 971131942}
   settingsTitle: {fileID: 1632015340}
   settingsButtons: {fileID: 635868680}
   settingsBackButton: {fileID: 134847917}
   transition: {fileID: 380157815}
-  isMainAnimationFinished: 0
 --- !u!4 &1216493063
 Transform:
   m_ObjectHideFlags: 0
@@ -2563,7 +2607,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Title2
+  m_Text: Playground
 --- !u!222 &1233423253
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2635,7 +2679,7 @@ Animator:
   m_GameObject: {fileID: 1280155252}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: e0e5a23152ed917438de7a2983b5645d, type: 2}
+  m_Controller: {fileID: 9100000, guid: 8379d8aae4611bd4a91127c90ac4a0d6, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -3052,7 +3096,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 80, y: 0}
-  m_SizeDelta: {x: 800, y: 120}
+  m_SizeDelta: {x: 800, y: 80}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1527345928
 MonoBehaviour:
@@ -3097,7 +3141,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1527345929}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 409461943}
+        m_TargetAssemblyTypeName: SettingsManager, Assembly-CSharp
+        m_MethodName: SetAnything
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1527345929
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3367,7 +3423,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 80, y: -80}
-  m_SizeDelta: {x: 800, y: 120}
+  m_SizeDelta: {x: 800, y: 80}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1631188522
 MonoBehaviour:
@@ -3412,7 +3468,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1631188523}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 409461943}
+        m_TargetAssemblyTypeName: SettingsManager, Assembly-CSharp
+        m_MethodName: SetEverything
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1631188523
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3752,7 +3820,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Title1
+  m_Text: WildPotato
 --- !u!222 &1702636417
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4032,8 +4100,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -20, y: 0}
+  m_SizeDelta: {x: -40, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1966032635
 MonoBehaviour:
@@ -4068,7 +4136,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Off
+  m_Text: OFF
 --- !u!222 &1966032636
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4266,9 +4334,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Transition
       objectReference: {fileID: 0}
+    - target: {fileID: 626850182389772545, guid: 38d106c7cc19a664e9370f785835b5c9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5492325822555166026, guid: 38d106c7cc19a664e9370f785835b5c9, type: 3}
       propertyPath: m_Pivot.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5492325822555166026, guid: 38d106c7cc19a664e9370f785835b5c9, type: 3}
       propertyPath: m_Pivot.y
@@ -4292,7 +4364,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5492325822555166026, guid: 38d106c7cc19a664e9370f785835b5c9, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 2460
+      value: 3000
       objectReference: {fileID: 0}
     - target: {fileID: 5492325822555166026, guid: 38d106c7cc19a664e9370f785835b5c9, type: 3}
       propertyPath: m_SizeDelta.y

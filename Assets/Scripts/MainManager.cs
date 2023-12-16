@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class MainManager : MonoBehaviour
 {
     private const float AfterButtonBackDelay = 0.5f;
-    private const float AfterTransitionDelay = 1f;
     private const float SettingsShowDelay = 0.1f;
     
     private static readonly int FirstHash = Animator.StringToHash("First");
@@ -16,9 +15,6 @@ public class MainManager : MonoBehaviour
     private static readonly int SkipHash = Animator.StringToHash("Skip");
     
     [Header ("Main")]
-    [SerializeField] private GameObject mainParent;
-    
-    [Space (10)]
     [FormerlySerializedAs("title")]
     [SerializeField] private GameObject mainTitle;
     [SerializeField] private GameObject infoText;
@@ -34,9 +30,6 @@ public class MainManager : MonoBehaviour
     [SerializeField] private GameObject quitButtonBack;
     
     [Header ("Settings")]
-    [SerializeField] private GameObject settingsParent;
-    
-    [Space (10)]
     [SerializeField] private GameObject settingsTitle;
     [SerializeField] private GameObject settingsButtons;
     [SerializeField] private GameObject settingsBackButton;
@@ -52,29 +45,20 @@ public class MainManager : MonoBehaviour
     private Animator _quitButtonAnim;
     private Animator _settingsTitleAnim;
     private Animator _settingsBackButtonAnim;
+    private Animator _transitionAnim;
     
-    private List<Animator> _settingsButtonAnims = new();
+    private IEnumerator _firstAnimation;
+    
+    private readonly List<Animator> _settingsButtonAnims = new();
 
-    [HideInInspector] public bool isMainAnimationFinished;
-
-    public static MainManager Instance { get; private set; }
-
-    private void Awake()
+    private static bool IsMainAnimationFinished
     {
-        if (Instance is null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        get => GameManager.Instance.isMainAnimationFinished;
+        set => GameManager.Instance.isMainAnimationFinished = value;
     }
     
     private void Start()
     {
-        isMainAnimationFinished = false;
-
         infoText.GetComponent<Text>().text = $"v{Application.version}";
         
         _mainTitleAnim = mainTitle.GetComponent<Animator>();
@@ -84,24 +68,31 @@ public class MainManager : MonoBehaviour
         _quitButtonAnim = quitButton.GetComponent<Animator>();
         _settingsTitleAnim = settingsTitle.GetComponent<Animator>();
         _settingsBackButtonAnim = settingsBackButton.GetComponent<Animator>();
+        _transitionAnim = transition.GetComponent<Animator>();
         
         foreach (var anim in settingsButtons.GetComponentsInChildren<Animator>())
         {
             _settingsButtonAnims.Add(anim);
         }
-        
-        _mainTitleAnim.SetTrigger(FirstHash);
-        _infoTextAnim.SetTrigger(FirstHash);
-        _startButtonAnim.SetTrigger(FirstHash);
-        _settingsButtonAnim.SetTrigger(FirstHash);
-        _quitButtonAnim.SetTrigger(FirstHash);
+
+        if (!IsMainAnimationFinished)
+        {
+            _firstAnimation = FirstAnimation();
+            StartCoroutine(_firstAnimation);
+        }
+        else
+        {
+            StartCoroutine(BackToMainAnimation());
+        }
     }
 
     private void Update()
     {
-        if (!isMainAnimationFinished && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Mouse0)))
+        if (!IsMainAnimationFinished && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Mouse0)))
         {
-            isMainAnimationFinished = true;
+            IsMainAnimationFinished = true;
+            
+            StopCoroutine(_firstAnimation);
         
             _mainTitleAnim.SetTrigger(SkipHash);
             _infoTextAnim.SetTrigger(SkipHash);
@@ -120,9 +111,28 @@ public class MainManager : MonoBehaviour
             // TODO
         }
     }
+    
+    private IEnumerator FirstAnimation()
+    {
+        _mainTitleAnim.SetTrigger(FirstHash);
+        
+        yield return new WaitForSeconds(1.5f);
+        
+        _startButtonAnim.SetTrigger(ShowHash);
+        yield return new WaitForSeconds(0.2f);
+        _settingsButtonAnim.SetTrigger(ShowHash);
+        yield return new WaitForSeconds(0.2f);
+        _quitButtonAnim.SetTrigger(ShowHash);
+        _infoTextAnim.SetTrigger(ShowHash);
+        
+        yield return new WaitForSeconds(0.5f);
+        
+        IsMainAnimationFinished = true;
+    }
 
     private IEnumerator StartAnimation()
     {
+        _startButtonAnim.SetTrigger(HideHash);
         _settingsButtonAnim.SetTrigger(HideHash);
         _quitButtonAnim.SetTrigger(HideHash);
         
@@ -130,11 +140,12 @@ public class MainManager : MonoBehaviour
         startButtonBack.GetComponent<Animator>().SetTrigger(ShowHash);
 
         yield return new WaitForSeconds(AfterButtonBackDelay);
+
+        _transitionAnim.SetTrigger(ShowHash);
         
-        transition.SetActive(true);
-        transition.GetComponent<Animator>().SetTrigger(ShowHash);
-        
-        yield return new WaitForSeconds(AfterTransitionDelay);
+        yield return new WaitForSeconds(TransitionBehaviour.AfterTransitionShowDelay);
+
+        GameManager.Instance.LoadStart();
     }
     
     private IEnumerator SettingsAnimation()
@@ -142,6 +153,7 @@ public class MainManager : MonoBehaviour
         var settingsButtonBackAnim = settingsButtonBack.GetComponent<Animator>();
         
         _startButtonAnim.SetTrigger(HideHash);
+        _settingsButtonAnim.SetTrigger(HideHash);
         _quitButtonAnim.SetTrigger(HideHash);
         
         settingsButtonBack.SetActive(true);
@@ -152,7 +164,7 @@ public class MainManager : MonoBehaviour
         yield return new WaitForSeconds(AfterButtonBackDelay);
         
         settingsButtonBackAnim.SetTrigger(HideHash);
-        settingsParent.SetActive(true);
+        // settingsParent.SetActive(true);
 
         yield return new WaitForSeconds(0.2f);
         
@@ -168,7 +180,7 @@ public class MainManager : MonoBehaviour
         
         _settingsBackButtonAnim.SetTrigger(ShowHash);
         
-        mainParent.SetActive(false);
+        // mainParent.SetActive(false);
         
     }
 
@@ -176,18 +188,18 @@ public class MainManager : MonoBehaviour
     {
         _startButtonAnim.SetTrigger(HideHash);
         _settingsButtonAnim.SetTrigger(HideHash);
+        _quitButtonAnim.SetTrigger(HideHash);
         
         quitButtonBack.SetActive(true);
         quitButtonBack.GetComponent<Animator>().SetTrigger(ShowHash);
 
         yield return new WaitForSeconds(AfterButtonBackDelay);
-        
-        transition.SetActive(true);
-        transition.GetComponent<Animator>().SetTrigger(ShowHash);
 
-        yield return new WaitForSeconds(AfterTransitionDelay);
+        _transitionAnim.SetTrigger(ShowHash);
+
+        yield return new WaitForSeconds(TransitionBehaviour.AfterTransitionShowDelay);
         
-        GameManager.QuitGame();
+        GameManager.Instance.QuitGame();
     }
 
     private IEnumerator SettingsBackAnimation()
@@ -202,9 +214,17 @@ public class MainManager : MonoBehaviour
         
         yield return new WaitForSeconds(0.2f);
         
-        mainParent.SetActive(true);
-        settingsParent.SetActive(false);
-        
+        _mainTitleAnim.SetTrigger(ShowHash);
+        _infoTextAnim.SetTrigger(ShowHash);
+        _startButtonAnim.SetTrigger(ShowHash);
+        _settingsButtonAnim.SetTrigger(ShowHash);
+        _quitButtonAnim.SetTrigger(ShowHash);
+    }
+
+    private IEnumerator BackToMainAnimation()
+    {
+        _transitionAnim.SetTrigger(HideHash);
+        yield return new WaitForSeconds(0.5f);
         _mainTitleAnim.SetTrigger(ShowHash);
         _infoTextAnim.SetTrigger(ShowHash);
         _startButtonAnim.SetTrigger(ShowHash);

@@ -23,16 +23,16 @@ public class MainButtonAnimation : MonoBehaviour, IPointerEnterHandler, IPointer
     
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (_button.interactable) _anim.SetBool(HoverHash, false);
+        _anim.SetBool(HoverHash, false);
     }
     
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (_button.interactable) _anim.SetBool(PressedHash, true);
+        if (_button.interactable && eventData.button == PointerEventData.InputButton.Left) _anim.SetBool(PressedHash, true);
     }
     
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (_button.interactable) _anim.SetBool(PressedHash, false);
+        if (eventData.button == PointerEventData.InputButton.Left) _anim.SetBool(PressedHash, false);
     }
 }
