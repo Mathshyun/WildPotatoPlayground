@@ -39,6 +39,15 @@ public class SettingsManager : MonoBehaviour
         set => GameManager.Instance.oneMoreThing = value;
     }
     
+    public void SetAllText()
+    {
+        somethingButton.transform.GetChild(1).GetComponent<Text>().text = Something ? "ON" : "OFF";
+        nothingButton.transform.GetChild(1).GetComponent<Text>().text = Nothing ? "ON" : "OFF";
+        anythingButton.transform.GetChild(1).GetComponent<Text>().text = Anything ? "ON" : "OFF";
+        everythingButton.transform.GetChild(1).GetComponent<Text>().text = Everything ? "ON" : "OFF";
+        oneMoreThingButton.transform.GetChild(1).GetComponent<Text>().text = OneMoreThing ? "ON" : "OFF";
+    }
+    
     public void SetSomething()
     {
         Something = !Something;

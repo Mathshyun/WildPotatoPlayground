@@ -28,8 +28,9 @@ public class MainManager : MonoBehaviour
     [SerializeField] private GameObject startButtonBack;
     [SerializeField] private GameObject settingsButtonBack;
     [SerializeField] private GameObject quitButtonBack;
-    
-    [Header ("Settings")]
+
+    [Header("Settings")]
+    [SerializeField] private SettingsManager settingsManager;
     [SerializeField] private GameObject settingsTitle;
     [SerializeField] private GameObject settingsButtons;
     [SerializeField] private GameObject settingsBackButton;
@@ -84,6 +85,8 @@ public class MainManager : MonoBehaviour
         {
             StartCoroutine(BackToMainAnimation());
         }
+        
+        settingsManager.SetAllText();
     }
 
     private void Update()
