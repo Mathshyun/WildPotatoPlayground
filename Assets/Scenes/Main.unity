@@ -2480,6 +2480,7 @@ MonoBehaviour:
   startButtonBack: {fileID: 2018970301}
   settingsButtonBack: {fileID: 356820584}
   quitButtonBack: {fileID: 325739592}
+  settingsManager: {fileID: 409461943}
   settingsTitle: {fileID: 1632015340}
   settingsButtons: {fileID: 635868680}
   settingsBackButton: {fileID: 134847917}
