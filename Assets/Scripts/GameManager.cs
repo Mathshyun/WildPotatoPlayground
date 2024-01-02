@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
         {
             if (resolution.refreshRateRatio.Equals(currentRefreshRate))
             {
-                Resolutions.Add(resolution);
+                Resolutions.Add(new Resolution { width = resolution.width, height = resolution.height });
             }
         }
         

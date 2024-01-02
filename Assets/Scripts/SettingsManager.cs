@@ -99,7 +99,7 @@ public class SettingsManager : MonoBehaviour
     public void SetAllVideoSettingsText()
     {
         fullScreenMode = Screen.fullScreenMode;
-        resolution = Screen.currentResolution;
+        resolution = new Resolution { width = Screen.width, height = Screen.height };
         SetFullScreenModeText();
         SetResolutionText();
     }

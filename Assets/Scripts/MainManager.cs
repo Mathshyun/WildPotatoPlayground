@@ -334,6 +334,7 @@ public class MainManager : MonoBehaviour
     
     public void OnVideoSettingsBackButtonPressed()
     {
+        transition.GetComponent<TransitionBehaviour>().SetSize();
         StartCoroutine(VideoSettingsBackToSettingsAnimation());
     }
 }
