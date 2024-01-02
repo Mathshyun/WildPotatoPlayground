@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,12 +12,13 @@ public class GameManager : MonoBehaviour
     
     public static GameManager Instance { get; private set; }
 
-    public bool something;
     public bool nothing;
     public bool anything;
     public bool everything;
     public bool oneMoreThing;
     public bool isMainAnimationFinished;
+
+    public readonly List<Resolution> Resolutions = new();
     
     private void Awake()
     {
@@ -34,7 +36,16 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        something = false;
+        var currentRefreshRate = Screen.currentResolution.refreshRateRatio;
+        
+        foreach (var resolution in Screen.resolutions)
+        {
+            if (resolution.refreshRateRatio.Equals(currentRefreshRate))
+            {
+                Resolutions.Add(resolution);
+            }
+        }
+        
         nothing = false;
         anything = false;
         everything = false;

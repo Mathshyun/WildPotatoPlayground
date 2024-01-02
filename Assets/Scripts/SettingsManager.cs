@@ -1,19 +1,18 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SettingsManager : MonoBehaviour
 {
-    [SerializeField] private GameObject somethingButton;
+    [Header ("Settings")]
     [SerializeField] private GameObject nothingButton;
     [SerializeField] private GameObject anythingButton;
     [SerializeField] private GameObject everythingButton;
     [SerializeField] private GameObject oneMoreThingButton;
     
-    private static bool Something
-    {
-        get => GameManager.Instance.something;
-        set => GameManager.Instance.something = value;
-    }
+    [Header ("Video Settings")]
+    [SerializeField] private GameObject screenModeButton;
+    [SerializeField] private GameObject resolutionButton;
     
     private static bool Nothing
     {
@@ -39,19 +38,17 @@ public class SettingsManager : MonoBehaviour
         set => GameManager.Instance.oneMoreThing = value;
     }
     
-    public void SetAllText()
+    private FullScreenMode fullScreenMode;
+    private Resolution resolution;
+    
+#region Settings
+    
+    public void SetAllSettingsText()
     {
-        somethingButton.transform.GetChild(1).GetComponent<Text>().text = Something ? "ON" : "OFF";
         nothingButton.transform.GetChild(1).GetComponent<Text>().text = Nothing ? "ON" : "OFF";
         anythingButton.transform.GetChild(1).GetComponent<Text>().text = Anything ? "ON" : "OFF";
         everythingButton.transform.GetChild(1).GetComponent<Text>().text = Everything ? "ON" : "OFF";
         oneMoreThingButton.transform.GetChild(1).GetComponent<Text>().text = OneMoreThing ? "ON" : "OFF";
-    }
-    
-    public void SetSomething()
-    {
-        Something = !Something;
-        somethingButton.transform.GetChild(1).GetComponent<Text>().text = Something ? "ON" : "OFF";
     }
     
     public void SetNothing()
@@ -77,4 +74,80 @@ public class SettingsManager : MonoBehaviour
         OneMoreThing = !OneMoreThing;
         oneMoreThingButton.transform.GetChild(1).GetComponent<Text>().text = OneMoreThing ? "ON" : "OFF";
     }
+    
+#endregion
+    
+#region Video Settings
+
+    private void SetFullScreenModeText()
+    {
+        screenModeButton.transform.GetChild(1).GetComponent<Text>().text = fullScreenMode switch
+        {
+            FullScreenMode.ExclusiveFullScreen => "Full Screen",
+            FullScreenMode.MaximizedWindow     => "Full Screen",
+            FullScreenMode.FullScreenWindow    => "Borderless",
+            FullScreenMode.Windowed            => "Windowed",
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    private void SetResolutionText()
+    {
+        resolutionButton.transform.GetChild(1).GetComponent<Text>().text = $"{resolution.width}x{resolution.height}";
+    }
+    
+    public void SetAllVideoSettingsText()
+    {
+        fullScreenMode = Screen.fullScreenMode;
+        resolution = Screen.currentResolution;
+        SetFullScreenModeText();
+        SetResolutionText();
+    }
+
+    public void SetFullScreenMode()
+    {
+#if !UNITY_STANDALONE_WIN && !UNITY_STANDALONE_OSX
+        return;
+#endif
+
+        switch (fullScreenMode)
+        {
+            case FullScreenMode.ExclusiveFullScreen:
+            case FullScreenMode.MaximizedWindow:
+                fullScreenMode = FullScreenMode.FullScreenWindow;
+                break;
+            case FullScreenMode.FullScreenWindow:
+                fullScreenMode = FullScreenMode.Windowed;
+                break;
+            case FullScreenMode.Windowed:
+#if UNITY_STANDALONE_WIN
+                fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+#elif UNITY_STANDALONE_OSX
+                fullScreenMode = FullScreenMode.MaximizedWindow;
+#endif
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        
+        SetFullScreenModeText();
+    }
+
+    public void SetResolution()
+    {
+        var resolutions = GameManager.Instance.Resolutions;
+        var index = resolutions.IndexOf(resolution);
+        
+        index = (index + 1) % resolutions.Count;
+        resolution = resolutions[index];
+        
+        SetResolutionText();
+    }
+
+    public void ApplyVideoSettings()
+    {
+        Screen.SetResolution(resolution.width, resolution.height, fullScreenMode);
+    }
+    
+#endregion
 }
