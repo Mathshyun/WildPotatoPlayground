@@ -38,6 +38,8 @@ public class GameManager : MonoBehaviour
     {
         var currentRefreshRate = Screen.currentResolution.refreshRateRatio;
         
+        Application.targetFrameRate = (int) Screen.currentResolution.refreshRateRatio.value;
+        
         foreach (var resolution in Screen.resolutions)
         {
             if (resolution.refreshRateRatio.Equals(currentRefreshRate))
