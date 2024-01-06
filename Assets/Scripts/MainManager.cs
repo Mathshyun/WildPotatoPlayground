@@ -42,10 +42,6 @@ public class MainManager : MonoBehaviour
     [SerializeField] private GameObject videoSettingsApplyButton;
     [SerializeField] private GameObject videoSettingsBackButton;
 
-    [Header ("Transition")]
-    [SerializeField] private GameObject transition;
-    
-
     private Animator _mainTitleAnim;
     private Animator _infoTextAnim;
     private Animator _startButtonAnim;
@@ -56,7 +52,6 @@ public class MainManager : MonoBehaviour
     private Animator _videoSettingsTitleAnim;
     private Animator _videoSettingsApplyButtonAnim;
     private Animator _videoSettingsBackButtonAnim;
-    private Animator _transitionAnim;
     
     private IEnumerator _firstAnimation;
     
@@ -85,8 +80,6 @@ public class MainManager : MonoBehaviour
         _videoSettingsTitleAnim = videoSettingsTitle.GetComponent<Animator>();
         _videoSettingsApplyButtonAnim = videoSettingsApplyButton.GetComponent<Animator>();
         _videoSettingsBackButtonAnim = videoSettingsBackButton.GetComponent<Animator>();
-        
-        _transitionAnim = transition.GetComponent<Animator>();
         
         
         foreach (var anim in settingsButtons.GetComponentsInChildren<Animator>())
@@ -163,12 +156,11 @@ public class MainManager : MonoBehaviour
         _settingsButtonAnim.SetTrigger(HideHash);
         _quitButtonAnim.SetTrigger(HideHash);
         
-        mainStartButtonBack.SetActive(true);
         mainStartButtonBack.GetComponent<Animator>().SetTrigger(ShowHash);
 
         yield return new WaitForSeconds(AfterButtonBackDelay);
 
-        _transitionAnim.SetTrigger(ShowHash);
+        TransitionBehaviour.Instance.ShowAnimation();
         
         yield return new WaitForSeconds(TransitionBehaviour.AfterTransitionShowDelay);
 
@@ -183,7 +175,6 @@ public class MainManager : MonoBehaviour
         _settingsButtonAnim.SetTrigger(HideHash);
         _quitButtonAnim.SetTrigger(HideHash);
         
-        mainSettingsButtonBack.SetActive(true);
         settingsButtonBackAnim.SetTrigger(ShowHash);
         _mainTitleAnim.SetTrigger(HideHash);
         _infoTextAnim.SetTrigger(HideHash);
@@ -213,12 +204,11 @@ public class MainManager : MonoBehaviour
         _settingsButtonAnim.SetTrigger(HideHash);
         _quitButtonAnim.SetTrigger(HideHash);
         
-        mainQuitButtonBack.SetActive(true);
         mainQuitButtonBack.GetComponent<Animator>().SetTrigger(ShowHash);
 
         yield return new WaitForSeconds(AfterButtonBackDelay);
 
-        _transitionAnim.SetTrigger(ShowHash);
+        TransitionBehaviour.Instance.ShowAnimation();
 
         yield return new WaitForSeconds(TransitionBehaviour.AfterTransitionShowDelay);
         
@@ -246,7 +236,7 @@ public class MainManager : MonoBehaviour
 
     private IEnumerator BackToMainSceneAnimation()
     {
-        _transitionAnim.SetTrigger(HideHash);
+        TransitionBehaviour.Instance.HideAnimation();
         yield return new WaitForSeconds(0.5f);
         _mainTitleAnim.SetTrigger(ShowHash);
         _infoTextAnim.SetTrigger(ShowHash);
@@ -334,7 +324,7 @@ public class MainManager : MonoBehaviour
     
     public void OnVideoSettingsBackButtonPressed()
     {
-        transition.GetComponent<TransitionBehaviour>().SetSize();
+        TransitionBehaviour.Instance.SetSize();
         StartCoroutine(VideoSettingsBackToSettingsAnimation());
     }
 }

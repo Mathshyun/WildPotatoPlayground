@@ -9,26 +9,23 @@ public class StartManager : MonoBehaviour
     [SerializeField] private GameObject title;
     [SerializeField] private GameObject description;
     [SerializeField] private GameObject backButton;
-    [SerializeField] private GameObject transition;
 
     private Animator _titleAnim;
     private Animator _descAnim;
     private Animator _backAnim;
-    private Animator _transAnim;
     
     private void Start()
     {
         _titleAnim = title.GetComponent<Animator>();
         _descAnim = description.GetComponent<Animator>();
         _backAnim = backButton.GetComponent<Animator>();
-        _transAnim = transition.GetComponent<Animator>();
         
         StartCoroutine(StartAnimation());
     }
 
     private IEnumerator StartAnimation()
     {
-        _transAnim.SetTrigger(HideHash);
+        TransitionBehaviour.Instance.HideAnimation();
         yield return new WaitForSeconds(0.5f);
         _titleAnim.SetTrigger(ShowHash);
         yield return new WaitForSeconds(0.2f);
@@ -44,8 +41,7 @@ public class StartManager : MonoBehaviour
         _backAnim.SetTrigger(HideHash);
         yield return new WaitForSeconds(0.3f);
         
-        transition.SetActive(true);
-        transition.GetComponent<Animator>().SetTrigger(ShowHash);
+        TransitionBehaviour.Instance.ShowAnimation();
 
         yield return new WaitForSeconds(TransitionBehaviour.AfterTransitionShowDelay);
 
