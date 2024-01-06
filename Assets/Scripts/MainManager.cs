@@ -17,42 +17,34 @@ public class MainManager : MonoBehaviour
     
     [Header ("Main")]
     [FormerlySerializedAs("title")]
-    [SerializeField] private GameObject mainTitle;
-    [SerializeField] private GameObject mainInfoText;
+    [SerializeField] private Animator mainTitleAnim;
+    [SerializeField] private Animator mainInfoAnim;
+    [SerializeField] private Text mainInfoText;
     
     [Space (10)]
-    [SerializeField] private GameObject mainStartButton;
-    [SerializeField] private GameObject mainSettingsButton;
-    [SerializeField] private GameObject mainQuitButton;
+    [SerializeField] private Animator mainStartButtonAnim;
+    [SerializeField] private Animator mainSettingsButtonAnim;
+    [SerializeField] private Animator mainQuitButtonAnim;
     
     [Space (10)]
-    [SerializeField] private GameObject mainStartButtonBack;
-    [SerializeField] private GameObject mainSettingsButtonBack;
-    [SerializeField] private GameObject mainQuitButtonBack;
+    [SerializeField] private Animator mainStartButtonBackAnim;
+    [SerializeField] private Animator mainSettingsButtonBackAnim;
+    [SerializeField] private Animator mainQuitButtonBackAnim;
 
     [Header("Settings")]
     [SerializeField] private SettingsManager settingsManager;
-    [SerializeField] private GameObject settingsTitle;
+    
+    [Space (10)]
+    [SerializeField] private Animator settingsTitleAnim;
+    [SerializeField] private Animator settingsBackButtonAnim;
     [SerializeField] private GameObject settingsButtons;
-    [SerializeField] private GameObject settingsBackButton;
 
     [Header("Video Settings")]
-    [SerializeField] private GameObject videoSettingsTitle;
+    [SerializeField] private Animator videoSettingsTitleAnim;
+    [SerializeField] private Animator videoSettingsApplyButtonAnim;
+    [SerializeField] private Animator videoSettingsBackButtonAnim;
     [SerializeField] private GameObject videoSettingsButtons;
-    [SerializeField] private GameObject videoSettingsApplyButton;
-    [SerializeField] private GameObject videoSettingsBackButton;
 
-    private Animator _mainTitleAnim;
-    private Animator _infoTextAnim;
-    private Animator _startButtonAnim;
-    private Animator _settingsButtonAnim;
-    private Animator _quitButtonAnim;
-    private Animator _settingsTitleAnim;
-    private Animator _settingsBackButtonAnim;
-    private Animator _videoSettingsTitleAnim;
-    private Animator _videoSettingsApplyButtonAnim;
-    private Animator _videoSettingsBackButtonAnim;
-    
     private IEnumerator _firstAnimation;
     
     private readonly List<Animator> _settingsButtonAnims = new();
@@ -66,21 +58,7 @@ public class MainManager : MonoBehaviour
     
     private void Start()
     {
-        mainInfoText.GetComponent<Text>().text = $"v{Application.version}";
-        
-        _mainTitleAnim = mainTitle.GetComponent<Animator>();
-        _infoTextAnim = mainInfoText.GetComponent<Animator>();
-        _startButtonAnim = mainStartButton.GetComponent<Animator>();
-        _settingsButtonAnim = mainSettingsButton.GetComponent<Animator>();
-        _quitButtonAnim = mainQuitButton.GetComponent<Animator>();
-        
-        _settingsTitleAnim = settingsTitle.GetComponent<Animator>();
-        _settingsBackButtonAnim = settingsBackButton.GetComponent<Animator>();
-        
-        _videoSettingsTitleAnim = videoSettingsTitle.GetComponent<Animator>();
-        _videoSettingsApplyButtonAnim = videoSettingsApplyButton.GetComponent<Animator>();
-        _videoSettingsBackButtonAnim = videoSettingsBackButton.GetComponent<Animator>();
-        
+        mainInfoText.text = $"v{Application.version}";
         
         foreach (var anim in settingsButtons.GetComponentsInChildren<Animator>())
         {
@@ -114,11 +92,11 @@ public class MainManager : MonoBehaviour
             
             StopCoroutine(_firstAnimation);
         
-            _mainTitleAnim.SetTrigger(SkipHash);
-            _infoTextAnim.SetTrigger(SkipHash);
-            _startButtonAnim.SetTrigger(SkipHash);
-            _settingsButtonAnim.SetTrigger(SkipHash);
-            _quitButtonAnim.SetTrigger(SkipHash);
+            mainTitleAnim.SetTrigger(SkipHash);
+            mainInfoAnim.SetTrigger(SkipHash);
+            mainStartButtonAnim.SetTrigger(SkipHash);
+            mainSettingsButtonAnim.SetTrigger(SkipHash);
+            mainQuitButtonAnim.SetTrigger(SkipHash);
         }
 
         if (Input.GetKeyDown(KeyCode.DownArrow))
@@ -134,16 +112,16 @@ public class MainManager : MonoBehaviour
     
     private IEnumerator FirstAnimation()
     {
-        _mainTitleAnim.SetTrigger(FirstHash);
+        mainTitleAnim.SetTrigger(FirstHash);
         
         yield return new WaitForSeconds(1.5f);
         
-        _startButtonAnim.SetTrigger(ShowHash);
+        mainStartButtonAnim.SetTrigger(ShowHash);
         yield return new WaitForSeconds(0.2f);
-        _settingsButtonAnim.SetTrigger(ShowHash);
+        mainSettingsButtonAnim.SetTrigger(ShowHash);
         yield return new WaitForSeconds(0.2f);
-        _quitButtonAnim.SetTrigger(ShowHash);
-        _infoTextAnim.SetTrigger(ShowHash);
+        mainQuitButtonAnim.SetTrigger(ShowHash);
+        mainInfoAnim.SetTrigger(ShowHash);
         
         yield return new WaitForSeconds(0.5f);
         
@@ -152,11 +130,11 @@ public class MainManager : MonoBehaviour
 
     private IEnumerator StartAnimation()
     {
-        _startButtonAnim.SetTrigger(HideHash);
-        _settingsButtonAnim.SetTrigger(HideHash);
-        _quitButtonAnim.SetTrigger(HideHash);
+        mainStartButtonAnim.SetTrigger(HideHash);
+        mainSettingsButtonAnim.SetTrigger(HideHash);
+        mainQuitButtonAnim.SetTrigger(HideHash);
         
-        mainStartButtonBack.GetComponent<Animator>().SetTrigger(ShowHash);
+        mainStartButtonBackAnim.SetTrigger(ShowHash);
 
         yield return new WaitForSeconds(AfterButtonBackDelay);
 
@@ -169,23 +147,21 @@ public class MainManager : MonoBehaviour
     
     private IEnumerator SettingsAnimation()
     {
-        var settingsButtonBackAnim = mainSettingsButtonBack.GetComponent<Animator>();
+        mainStartButtonAnim.SetTrigger(HideHash);
+        mainSettingsButtonAnim.SetTrigger(HideHash);
+        mainQuitButtonAnim.SetTrigger(HideHash);
         
-        _startButtonAnim.SetTrigger(HideHash);
-        _settingsButtonAnim.SetTrigger(HideHash);
-        _quitButtonAnim.SetTrigger(HideHash);
-        
-        settingsButtonBackAnim.SetTrigger(ShowHash);
-        _mainTitleAnim.SetTrigger(HideHash);
-        _infoTextAnim.SetTrigger(HideHash);
+       mainSettingsButtonBackAnim.SetTrigger(ShowHash);
+        mainTitleAnim.SetTrigger(HideHash);
+        mainInfoAnim.SetTrigger(HideHash);
         
         yield return new WaitForSeconds(AfterButtonBackDelay);
         
-        settingsButtonBackAnim.SetTrigger(HideHash);
+       mainSettingsButtonBackAnim.SetTrigger(HideHash);
 
         yield return new WaitForSeconds(AfterHideDelay);
         
-        _settingsTitleAnim.SetTrigger(ShowHash);
+        settingsTitleAnim.SetTrigger(ShowHash);
         
         yield return new WaitForSeconds(SettingsShowDelay);
         
@@ -195,16 +171,16 @@ public class MainManager : MonoBehaviour
             yield return new WaitForSeconds(SettingsShowDelay);
         }
 
-        _settingsBackButtonAnim.SetTrigger(ShowHash);
+        settingsBackButtonAnim.SetTrigger(ShowHash);
     }
 
     private IEnumerator QuitAnimation()
     {
-        _startButtonAnim.SetTrigger(HideHash);
-        _settingsButtonAnim.SetTrigger(HideHash);
-        _quitButtonAnim.SetTrigger(HideHash);
+        mainStartButtonAnim.SetTrigger(HideHash);
+        mainSettingsButtonAnim.SetTrigger(HideHash);
+        mainQuitButtonAnim.SetTrigger(HideHash);
         
-        mainQuitButtonBack.GetComponent<Animator>().SetTrigger(ShowHash);
+        mainQuitButtonBackAnim.SetTrigger(ShowHash);
 
         yield return new WaitForSeconds(AfterButtonBackDelay);
 
@@ -217,8 +193,8 @@ public class MainManager : MonoBehaviour
 
     private IEnumerator SettingsBackToMainAnimation()
     {
-        _settingsTitleAnim.SetTrigger(HideHash);
-        _settingsBackButtonAnim.SetTrigger(HideHash);
+        settingsTitleAnim.SetTrigger(HideHash);
+        settingsBackButtonAnim.SetTrigger(HideHash);
         
         foreach (var anim in _settingsButtonAnims)
         {
@@ -227,28 +203,28 @@ public class MainManager : MonoBehaviour
         
         yield return new WaitForSeconds(AfterHideDelay);
         
-        _mainTitleAnim.SetTrigger(ShowHash);
-        _infoTextAnim.SetTrigger(ShowHash);
-        _startButtonAnim.SetTrigger(ShowHash);
-        _settingsButtonAnim.SetTrigger(ShowHash);
-        _quitButtonAnim.SetTrigger(ShowHash);
+        mainTitleAnim.SetTrigger(ShowHash);
+        mainInfoAnim.SetTrigger(ShowHash);
+        mainStartButtonAnim.SetTrigger(ShowHash);
+        mainSettingsButtonAnim.SetTrigger(ShowHash);
+        mainQuitButtonAnim.SetTrigger(ShowHash);
     }
 
     private IEnumerator BackToMainSceneAnimation()
     {
         TransitionBehaviour.Instance.HideAnimation();
         yield return new WaitForSeconds(0.5f);
-        _mainTitleAnim.SetTrigger(ShowHash);
-        _infoTextAnim.SetTrigger(ShowHash);
-        _startButtonAnim.SetTrigger(ShowHash);
-        _settingsButtonAnim.SetTrigger(ShowHash);
-        _quitButtonAnim.SetTrigger(ShowHash);
+        mainTitleAnim.SetTrigger(ShowHash);
+        mainInfoAnim.SetTrigger(ShowHash);
+        mainStartButtonAnim.SetTrigger(ShowHash);
+        mainSettingsButtonAnim.SetTrigger(ShowHash);
+        mainQuitButtonAnim.SetTrigger(ShowHash);
     }
 
     private IEnumerator VideoSettingsAnimation()
     {
-        _settingsTitleAnim.SetTrigger(HideHash);
-        _settingsBackButtonAnim.SetTrigger(HideHash);
+        settingsTitleAnim.SetTrigger(HideHash);
+        settingsBackButtonAnim.SetTrigger(HideHash);
         
         foreach (var anim in _settingsButtonAnims)
         {
@@ -257,22 +233,22 @@ public class MainManager : MonoBehaviour
         
         yield return new WaitForSeconds(0.2f);
         
-        _videoSettingsTitleAnim.SetTrigger(ShowHash);
+        videoSettingsTitleAnim.SetTrigger(ShowHash);
         
         foreach (var anim in _videoSettingsButtonAnims)
         {
             anim.SetTrigger(ShowHash);
         }
 
-        _videoSettingsApplyButtonAnim.SetTrigger(ShowHash);
-        _videoSettingsBackButtonAnim.SetTrigger(ShowHash);
+        videoSettingsApplyButtonAnim.SetTrigger(ShowHash);
+        videoSettingsBackButtonAnim.SetTrigger(ShowHash);
     }
 
     private IEnumerator VideoSettingsBackToSettingsAnimation()
     {
-        _videoSettingsTitleAnim.SetTrigger(HideHash);
-        _videoSettingsApplyButtonAnim.SetTrigger(HideHash);
-        _videoSettingsBackButtonAnim.SetTrigger(HideHash);
+        videoSettingsTitleAnim.SetTrigger(HideHash);
+        videoSettingsApplyButtonAnim.SetTrigger(HideHash);
+        videoSettingsBackButtonAnim.SetTrigger(HideHash);
 
         foreach (var anim in _videoSettingsButtonAnims)
         {
@@ -286,14 +262,14 @@ public class MainManager : MonoBehaviour
 
     private void BackToSettingsAnimation()
     {
-        _settingsTitleAnim.SetTrigger(ShowHash);
+        settingsTitleAnim.SetTrigger(ShowHash);
         
         foreach (var anim in _settingsButtonAnims)
         {
             anim.SetTrigger(ShowHash);
         }
         
-        _settingsBackButtonAnim.SetTrigger(ShowHash);
+        settingsBackButtonAnim.SetTrigger(ShowHash);
     }
     
     public void OnStartButtonPressed()

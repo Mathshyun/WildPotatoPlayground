@@ -9,8 +9,6 @@ public class GameManager : MonoBehaviour
         Main = 0,
         Start = 1
     }
-    
-    public static GameManager Instance { get; private set; }
 
     public bool nothing;
     public bool anything;
@@ -19,6 +17,8 @@ public class GameManager : MonoBehaviour
     public bool isMainAnimationFinished;
 
     public readonly List<Resolution> Resolutions = new();
+    
+    public static GameManager Instance { get; private set; }
     
     private void Awake()
     {
@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadMain()
     {
+        isMainAnimationFinished = true;
         SceneManager.LoadScene((int) SceneIndex.Main);
     }
     

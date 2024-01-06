@@ -6,20 +6,12 @@ public class StartManager : MonoBehaviour
     private static readonly int ShowHash = Animator.StringToHash("Show");
     private static readonly int HideHash = Animator.StringToHash("Hide");
     
-    [SerializeField] private GameObject title;
-    [SerializeField] private GameObject description;
-    [SerializeField] private GameObject backButton;
-
-    private Animator _titleAnim;
-    private Animator _descAnim;
-    private Animator _backAnim;
+    [SerializeField] private Animator titleAnim;
+    [SerializeField] private Animator descriptionAnim;
+    [SerializeField] private Animator backButtonAnim;
     
     private void Start()
     {
-        _titleAnim = title.GetComponent<Animator>();
-        _descAnim = description.GetComponent<Animator>();
-        _backAnim = backButton.GetComponent<Animator>();
-        
         StartCoroutine(StartAnimation());
     }
 
@@ -27,18 +19,18 @@ public class StartManager : MonoBehaviour
     {
         TransitionBehaviour.Instance.HideAnimation();
         yield return new WaitForSeconds(0.5f);
-        _titleAnim.SetTrigger(ShowHash);
+        titleAnim.SetTrigger(ShowHash);
         yield return new WaitForSeconds(0.2f);
-        _descAnim.SetTrigger(ShowHash);
+        descriptionAnim.SetTrigger(ShowHash);
         yield return new WaitForSeconds(0.2f);
-        _backAnim.SetTrigger(ShowHash);
+        backButtonAnim.SetTrigger(ShowHash);
     }
 
     private IEnumerator BackAnimation()
     {
-        _titleAnim.SetTrigger(HideHash);
-        _descAnim.SetTrigger(HideHash);
-        _backAnim.SetTrigger(HideHash);
+        titleAnim.SetTrigger(HideHash);
+        descriptionAnim.SetTrigger(HideHash);
+        backButtonAnim.SetTrigger(HideHash);
         yield return new WaitForSeconds(0.3f);
         
         TransitionBehaviour.Instance.ShowAnimation();

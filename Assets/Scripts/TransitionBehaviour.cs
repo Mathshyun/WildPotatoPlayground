@@ -7,11 +7,11 @@ public class TransitionBehaviour : MonoBehaviour
     private static readonly int ShowHash = Animator.StringToHash("Show");
     private static readonly int HideHash = Animator.StringToHash("Hide");
     
-    private Animator animator;
-    private RectTransform transitionRect;
-    private RectTransform baseRect;
-    private RectTransform leftRect;
-    private RectTransform rightRect;
+    private Animator _animator;
+    private RectTransform _transitionRect;
+    private RectTransform _baseRect;
+    private RectTransform _leftRect;
+    private RectTransform _rightRect;
     
     public static TransitionBehaviour Instance { get; private set; }
 
@@ -31,30 +31,30 @@ public class TransitionBehaviour : MonoBehaviour
     
     private void Start()
     {
-        animator = GetComponentInChildren<Animator>();
-        transitionRect = transform.GetChild(0).GetComponent<RectTransform>();
-        baseRect = transform.GetChild(0).GetChild(0).GetComponent<RectTransform>();
-        leftRect = transform.GetChild(0).GetChild(1).GetComponent<RectTransform>();
-        rightRect = transform.GetChild(0).GetChild(2).GetComponent<RectTransform>();
+        _animator = GetComponentInChildren<Animator>();
+        _transitionRect = transform.GetChild(0).GetComponent<RectTransform>();
+        _baseRect = transform.GetChild(0).GetChild(0).GetComponent<RectTransform>();
+        _leftRect = transform.GetChild(0).GetChild(1).GetComponent<RectTransform>();
+        _rightRect = transform.GetChild(0).GetChild(2).GetComponent<RectTransform>();
         
         SetSize();
     }
 
     public void SetSize()
     {
-        transitionRect.sizeDelta = new Vector2(Screen.width + Screen.height, Screen.height);
-        baseRect.sizeDelta = new Vector2(Screen.width, 0f);
-        leftRect.sizeDelta = new Vector2(Screen.height / 2f, 0f);
-        rightRect.sizeDelta = new Vector2(Screen.height / 2f, 0f);
+        _transitionRect.sizeDelta = new Vector2(Screen.width + Screen.height, Screen.height);
+        _baseRect.sizeDelta = new Vector2(Screen.width, 0f);
+        _leftRect.sizeDelta = new Vector2(Screen.height / 2f, 0f);
+        _rightRect.sizeDelta = new Vector2(Screen.height / 2f, 0f);
     }
 
     public void ShowAnimation()
     {
-        animator.SetTrigger(ShowHash);
+        _animator.SetTrigger(ShowHash);
     }
     
     public void HideAnimation()
     {
-        animator.SetTrigger(HideHash);
+        _animator.SetTrigger(HideHash);
     }
 }

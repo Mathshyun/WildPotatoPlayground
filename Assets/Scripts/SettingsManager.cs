@@ -14,6 +14,9 @@ public class SettingsManager : MonoBehaviour
     [SerializeField] private GameObject screenModeButton;
     [SerializeField] private GameObject resolutionButton;
     
+    private FullScreenMode _fullScreenMode;
+    private Resolution _resolution;
+    
     private static bool Nothing
     {
         get => GameManager.Instance.nothing;
@@ -37,9 +40,6 @@ public class SettingsManager : MonoBehaviour
         get => GameManager.Instance.oneMoreThing;
         set => GameManager.Instance.oneMoreThing = value;
     }
-    
-    private FullScreenMode fullScreenMode;
-    private Resolution resolution;
     
 #region Settings
     
@@ -81,7 +81,7 @@ public class SettingsManager : MonoBehaviour
 
     private void SetFullScreenModeText()
     {
-        screenModeButton.transform.GetChild(1).GetComponent<Text>().text = fullScreenMode switch
+        screenModeButton.transform.GetChild(1).GetComponent<Text>().text = _fullScreenMode switch
         {
             FullScreenMode.ExclusiveFullScreen => "Full Screen",
             FullScreenMode.MaximizedWindow     => "Full Screen",
@@ -93,13 +93,13 @@ public class SettingsManager : MonoBehaviour
 
     private void SetResolutionText()
     {
-        resolutionButton.transform.GetChild(1).GetComponent<Text>().text = $"{resolution.width}x{resolution.height}";
+        resolutionButton.transform.GetChild(1).GetComponent<Text>().text = $"{_resolution.width}x{_resolution.height}";
     }
     
     public void SetAllVideoSettingsText()
     {
-        fullScreenMode = Screen.fullScreenMode;
-        resolution = new Resolution { width = Screen.width, height = Screen.height };
+        _fullScreenMode = Screen.fullScreenMode;
+        _resolution = new Resolution { width = Screen.width, height = Screen.height };
         SetFullScreenModeText();
         SetResolutionText();
     }
@@ -110,18 +110,18 @@ public class SettingsManager : MonoBehaviour
         return;
 #endif
 
-        switch (fullScreenMode)
+        switch (_fullScreenMode)
         {
             case FullScreenMode.ExclusiveFullScreen:
             case FullScreenMode.MaximizedWindow:
-                fullScreenMode = FullScreenMode.FullScreenWindow;
+                _fullScreenMode = FullScreenMode.FullScreenWindow;
                 break;
             case FullScreenMode.FullScreenWindow:
-                fullScreenMode = FullScreenMode.Windowed;
+                _fullScreenMode = FullScreenMode.Windowed;
                 break;
             case FullScreenMode.Windowed:
 #if UNITY_STANDALONE_WIN
-                fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+                _fullScreenMode = FullScreenMode.ExclusiveFullScreen;
 #elif UNITY_STANDALONE_OSX
                 fullScreenMode = FullScreenMode.MaximizedWindow;
 #endif
@@ -136,17 +136,17 @@ public class SettingsManager : MonoBehaviour
     public void SetResolution()
     {
         var resolutions = GameManager.Instance.Resolutions;
-        var index = resolutions.IndexOf(resolution);
+        var index = resolutions.IndexOf(_resolution);
         
         index = (index + 1) % resolutions.Count;
-        resolution = resolutions[index];
+        _resolution = resolutions[index];
         
         SetResolutionText();
     }
 
     public void ApplyVideoSettings()
     {
-        Screen.SetResolution(resolution.width, resolution.height, fullScreenMode);
+        Screen.SetResolution(_resolution.width, _resolution.height, _fullScreenMode);
     }
     
 #endregion
