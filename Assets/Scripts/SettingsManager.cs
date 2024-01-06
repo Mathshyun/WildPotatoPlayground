@@ -123,7 +123,7 @@ public class SettingsManager : MonoBehaviour
 #if UNITY_STANDALONE_WIN
                 _fullScreenMode = FullScreenMode.ExclusiveFullScreen;
 #elif UNITY_STANDALONE_OSX
-                fullScreenMode = FullScreenMode.MaximizedWindow;
+                _fullScreenMode = FullScreenMode.MaximizedWindow;
 #endif
                 break;
             default:
