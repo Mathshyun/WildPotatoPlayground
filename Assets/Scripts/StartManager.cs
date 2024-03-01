@@ -35,8 +35,8 @@ public class StartManager : MonoBehaviour
         
         TransitionBehaviour.Instance.ShowAnimation();
 
-        yield return new WaitForSeconds(TransitionBehaviour.AfterTransitionShowDelay);
-
+        yield return new WaitUntil(() => TransitionBehaviour.Instance.IsTransitionFinished());
+        
         GameManager.Instance.LoadMain();
     }
     

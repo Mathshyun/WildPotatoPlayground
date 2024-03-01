@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class TransitionBehaviour : MonoBehaviour
 {
-    public const float AfterTransitionShowDelay = 0.5f;
-    
     private static readonly int ShowHash = Animator.StringToHash("Show");
     private static readonly int HideHash = Animator.StringToHash("Hide");
     
@@ -17,7 +15,7 @@ public class TransitionBehaviour : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance is null)
+        if (Instance == null)
         {
             Instance = this;
             
@@ -48,13 +46,7 @@ public class TransitionBehaviour : MonoBehaviour
         _rightRect.sizeDelta = new Vector2(Screen.height / 2f, 0f);
     }
 
-    public void ShowAnimation()
-    {
-        _animator.SetTrigger(ShowHash);
-    }
-    
-    public void HideAnimation()
-    {
-        _animator.SetTrigger(HideHash);
-    }
+    public void ShowAnimation() => _animator.SetTrigger(ShowHash);
+    public void HideAnimation() => _animator.SetTrigger(HideHash);
+    public bool IsTransitionFinished() => _animator.GetCurrentAnimatorStateInfo(0).IsName("Hidden");
 }

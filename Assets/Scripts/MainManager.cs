@@ -1,8 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+
+public enum MainStates
+{
+    Main,
+    Settings,
+    VideoSettings
+}
 
 public class MainManager : MonoBehaviour
 {
@@ -15,11 +25,15 @@ public class MainManager : MonoBehaviour
     private static readonly int HideHash = Animator.StringToHash("Hide");
     private static readonly int SkipHash = Animator.StringToHash("Skip");
     
+    public MainStates state;
+    
     [Header ("Main")]
-    [FormerlySerializedAs("title")]
+    [SerializeField] private GameObject mainFirstSelected;
+    [SerializeField] private Text mainInfoText;
+
+    [Space(10)]
     [SerializeField] private Animator mainTitleAnim;
     [SerializeField] private Animator mainInfoAnim;
-    [SerializeField] private Text mainInfoText;
     
     [Space (10)]
     [SerializeField] private Animator mainStartButtonAnim;
@@ -33,17 +47,23 @@ public class MainManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private SettingsManager settingsManager;
+    [SerializeField] private GameObject settingsButtons;
+    [SerializeField] private GameObject settingsFirstSelected;
+    [SerializeField] private Button settingsBackButton;
     
     [Space (10)]
     [SerializeField] private Animator settingsTitleAnim;
     [SerializeField] private Animator settingsBackButtonAnim;
-    [SerializeField] private GameObject settingsButtons;
 
     [Header("Video Settings")]
+    [SerializeField] private GameObject videoSettingsButtons;
+    [SerializeField] private GameObject videoSettingsFirstSelected;
+    [SerializeField] private Button videoSettingsBackButton;
+
+    [Space(10)]
     [SerializeField] private Animator videoSettingsTitleAnim;
     [SerializeField] private Animator videoSettingsApplyButtonAnim;
     [SerializeField] private Animator videoSettingsBackButtonAnim;
-    [SerializeField] private GameObject videoSettingsButtons;
 
     private IEnumerator _firstAnimation;
     
@@ -59,6 +79,7 @@ public class MainManager : MonoBehaviour
     private void Start()
     {
         mainInfoText.text = $"v{Application.version}";
+        state = MainStates.Main;
         
         foreach (var anim in settingsButtons.GetComponentsInChildren<Animator>())
         {
@@ -72,45 +93,35 @@ public class MainManager : MonoBehaviour
 
         if (!IsMainAnimationFinished)
         {
-            _firstAnimation = FirstAnimation();
+            _firstAnimation = EnterMain();
             StartCoroutine(_firstAnimation);
         }
         else
         {
-            StartCoroutine(BackToMainSceneAnimation());
+            StartCoroutine(ReturnMain());
         }
         
         settingsManager.SetAllSettingsText();
         settingsManager.SetAllVideoSettingsText();
     }
 
-    private void Update()
-    {
-        if (!IsMainAnimationFinished && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Mouse0)))
-        {
-            IsMainAnimationFinished = true;
+    // private void Update()
+    // {
+    //     if (!IsMainAnimationFinished && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Mouse0)))
+    //     {
+    //         IsMainAnimationFinished = true;
             
-            StopCoroutine(_firstAnimation);
+    //         StopCoroutine(_firstAnimation);
         
-            mainTitleAnim.SetTrigger(SkipHash);
-            mainInfoAnim.SetTrigger(SkipHash);
-            mainStartButtonAnim.SetTrigger(SkipHash);
-            mainSettingsButtonAnim.SetTrigger(SkipHash);
-            mainQuitButtonAnim.SetTrigger(SkipHash);
-        }
-
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            // TODO
-        }
-
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            // TODO
-        }
-    }
+    //         mainTitleAnim.SetTrigger(SkipHash);
+    //         mainInfoAnim.SetTrigger(SkipHash);
+    //         mainStartButtonAnim.SetTrigger(SkipHash);
+    //         mainSettingsButtonAnim.SetTrigger(SkipHash);
+    //         mainQuitButtonAnim.SetTrigger(SkipHash);
+    //     }
+    // }
     
-    private IEnumerator FirstAnimation()
+    private IEnumerator EnterMain()
     {
         mainTitleAnim.SetTrigger(FirstHash);
         
@@ -123,12 +134,12 @@ public class MainManager : MonoBehaviour
         mainQuitButtonAnim.SetTrigger(ShowHash);
         mainInfoAnim.SetTrigger(ShowHash);
         
-        yield return new WaitForSeconds(0.5f);
-        
+        yield return new WaitUntil(() => mainInfoAnim.GetCurrentAnimatorStateInfo(0).IsName("Idle"));
+
         IsMainAnimationFinished = true;
     }
 
-    private IEnumerator StartAnimation()
+    private IEnumerator EnterStart()
     {
         mainStartButtonAnim.SetTrigger(HideHash);
         mainSettingsButtonAnim.SetTrigger(HideHash);
@@ -140,18 +151,18 @@ public class MainManager : MonoBehaviour
 
         TransitionBehaviour.Instance.ShowAnimation();
         
-        yield return new WaitForSeconds(TransitionBehaviour.AfterTransitionShowDelay);
+        yield return new WaitUntil(() => TransitionBehaviour.Instance.IsTransitionFinished());
 
         GameManager.Instance.LoadStart();
     }
     
-    private IEnumerator SettingsAnimation()
+    private IEnumerator EnterSettings()
     {
         mainStartButtonAnim.SetTrigger(HideHash);
         mainSettingsButtonAnim.SetTrigger(HideHash);
         mainQuitButtonAnim.SetTrigger(HideHash);
         
-       mainSettingsButtonBackAnim.SetTrigger(ShowHash);
+        mainSettingsButtonBackAnim.SetTrigger(ShowHash);
         mainTitleAnim.SetTrigger(HideHash);
         mainInfoAnim.SetTrigger(HideHash);
         
@@ -174,7 +185,7 @@ public class MainManager : MonoBehaviour
         settingsBackButtonAnim.SetTrigger(ShowHash);
     }
 
-    private IEnumerator QuitAnimation()
+    private IEnumerator EnterQuit()
     {
         mainStartButtonAnim.SetTrigger(HideHash);
         mainSettingsButtonAnim.SetTrigger(HideHash);
@@ -186,12 +197,12 @@ public class MainManager : MonoBehaviour
 
         TransitionBehaviour.Instance.ShowAnimation();
 
-        yield return new WaitForSeconds(TransitionBehaviour.AfterTransitionShowDelay);
+        yield return new WaitUntil(() => TransitionBehaviour.Instance.IsTransitionFinished());
         
         GameManager.Instance.QuitGame();
     }
 
-    private IEnumerator SettingsBackToMainAnimation()
+    private IEnumerator ExitSettings()
     {
         settingsTitleAnim.SetTrigger(HideHash);
         settingsBackButtonAnim.SetTrigger(HideHash);
@@ -210,7 +221,7 @@ public class MainManager : MonoBehaviour
         mainQuitButtonAnim.SetTrigger(ShowHash);
     }
 
-    private IEnumerator BackToMainSceneAnimation()
+    private IEnumerator ReturnMain()
     {
         TransitionBehaviour.Instance.HideAnimation();
         yield return new WaitForSeconds(0.5f);
@@ -274,33 +285,73 @@ public class MainManager : MonoBehaviour
     
     public void OnStartButtonPressed()
     {
-        StartCoroutine(StartAnimation());
+        StartCoroutine(EnterStart());
     }
     
     public void OnSettingsButtonPressed()
     {
-        StartCoroutine(SettingsAnimation());
+        state = MainStates.Settings;
+        StartCoroutine(EnterSettings());
     }
     
     public void OnQuitButtonPressed()
     {
-        StartCoroutine(QuitAnimation());
+        StartCoroutine(EnterQuit());
     }
 
     public void OnVideoSettingsButtonPressed()
     {
+        state = MainStates.VideoSettings;
         settingsManager.SetAllVideoSettingsText();
         StartCoroutine(VideoSettingsAnimation());
     }
 
     public void OnSettingsBackButtonPressed()
     {
-        StartCoroutine(SettingsBackToMainAnimation());
+        state = MainStates.Main;
+        StartCoroutine(ExitSettings());
     }
     
     public void OnVideoSettingsBackButtonPressed()
     {
+        state = MainStates.Settings;
         TransitionBehaviour.Instance.SetSize();
         StartCoroutine(VideoSettingsBackToSettingsAnimation());
+    }
+
+    public void OnAnyKey()
+    {
+        if (!IsMainAnimationFinished)
+        {
+            IsMainAnimationFinished = true;
+            
+            StopCoroutine(_firstAnimation);
+        
+            mainTitleAnim.SetTrigger(SkipHash);
+            mainInfoAnim.SetTrigger(SkipHash);
+            mainStartButtonAnim.SetTrigger(SkipHash);
+            mainSettingsButtonAnim.SetTrigger(SkipHash);
+            mainQuitButtonAnim.SetTrigger(SkipHash);
+        }
+    }
+
+    public void OnCancel()
+    {
+        switch (state)
+        {
+            case MainStates.Main:
+                break;
+            
+            case MainStates.Settings:
+                if (settingsBackButton.IsInteractable()) OnSettingsBackButtonPressed();
+                break;
+
+            case MainStates.VideoSettings:
+                if (videoSettingsBackButton.IsInteractable()) OnVideoSettingsBackButtonPressed();
+                break;
+            
+            default:
+                throw new ArgumentException();
+        }
     }
 }
