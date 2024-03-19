@@ -1,10 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public enum MainStates
@@ -104,22 +101,6 @@ public class MainManager : MonoBehaviour
         settingsManager.SetAllSettingsText();
         settingsManager.SetAllVideoSettingsText();
     }
-
-    // private void Update()
-    // {
-    //     if (!IsMainAnimationFinished && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Mouse0)))
-    //     {
-    //         IsMainAnimationFinished = true;
-            
-    //         StopCoroutine(_firstAnimation);
-        
-    //         mainTitleAnim.SetTrigger(SkipHash);
-    //         mainInfoAnim.SetTrigger(SkipHash);
-    //         mainStartButtonAnim.SetTrigger(SkipHash);
-    //         mainSettingsButtonAnim.SetTrigger(SkipHash);
-    //         mainQuitButtonAnim.SetTrigger(SkipHash);
-    //     }
-    // }
     
     private IEnumerator EnterMain()
     {
@@ -321,18 +302,17 @@ public class MainManager : MonoBehaviour
 
     public void OnAnyKey()
     {
-        if (!IsMainAnimationFinished)
-        {
-            IsMainAnimationFinished = true;
-            
-            StopCoroutine(_firstAnimation);
+        if (IsMainAnimationFinished) return;
         
-            mainTitleAnim.SetTrigger(SkipHash);
-            mainInfoAnim.SetTrigger(SkipHash);
-            mainStartButtonAnim.SetTrigger(SkipHash);
-            mainSettingsButtonAnim.SetTrigger(SkipHash);
-            mainQuitButtonAnim.SetTrigger(SkipHash);
-        }
+        IsMainAnimationFinished = true;
+        
+        StopCoroutine(_firstAnimation);
+    
+        mainTitleAnim.SetTrigger(SkipHash);
+        mainInfoAnim.SetTrigger(SkipHash);
+        mainStartButtonAnim.SetTrigger(SkipHash);
+        mainSettingsButtonAnim.SetTrigger(SkipHash);
+        mainQuitButtonAnim.SetTrigger(SkipHash);
     }
 
     public void OnCancel()

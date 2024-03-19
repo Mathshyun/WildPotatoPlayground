@@ -75,4 +75,11 @@ public class GameManager : MonoBehaviour
         Application.Quit();
 #endif
     }
+
+    public void LoadScene(string sceneName)
+    {
+        // Some validation process will be added here...
+        
+        SceneManager.LoadScene(sceneName);
+    }
 }

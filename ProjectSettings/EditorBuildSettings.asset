@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Start.unity
     guid: 1ea7c4e6f5e4f8f4ea8bd566df2b4eaa
+  - enabled: 1
+    path: Assets/Scenes/KeyBindTest.unity
+    guid: a85e1df458aa1a3449f31918bfa59b61
   m_configObjects: {}

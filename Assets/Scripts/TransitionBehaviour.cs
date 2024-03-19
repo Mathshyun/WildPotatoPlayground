@@ -48,5 +48,5 @@ public class TransitionBehaviour : MonoBehaviour
 
     public void ShowAnimation() => _animator.SetTrigger(ShowHash);
     public void HideAnimation() => _animator.SetTrigger(HideHash);
-    public bool IsTransitionFinished() => _animator.GetCurrentAnimatorStateInfo(0).IsName("Hidden");
+    public bool IsTransitionFinished() => _animator.GetCurrentAnimatorStateInfo(0).IsName("Idle");
 }
